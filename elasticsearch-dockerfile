@@ -1,0 +1,7 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+
+ONBUILD RUN echo "\* soft nofile 64000" >> /etc/security/limits.conf
+ONBUILD RUN echo "\* hard nofile 75000" >> /etc/security/limits.conf
+ONBUILD RUN echo vm.max_map_count=262144 > /etc/sysctl.d/max_map_count.conf
+ONBUILD RUN echo vm.swappiness=0 > /etc/sysctl.d/swappiness.conf
+ONBUILD RUN sysctl -w vm.max_map_count=262144

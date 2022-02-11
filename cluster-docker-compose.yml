@@ -1,0 +1,139 @@
+version: '3.5'
+
+services:
+  tqp-elasticsearch-01:
+    image: tqp-elasticsearch:7.17.0
+    container_name: tqp-elasticsearch-01
+    hostname: tqp-elasticsearch-01
+    ports:
+      - 9200:9200
+    environment:
+      - node.name=tqp-elasticsearch-01
+      - cluster.name=elasticsearch-docker-cluster
+      - discovery.seed_hosts=tqp-elasticsearch-02,tqp-elasticsearch-03
+      - cluster.initial_master_nodes=tqp-elasticsearch-01,tqp-elasticsearch-02,tqp-elasticsearch-03
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=basic
+      - ELASTIC_PASSWORD=elastic
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-01/tqp-elasticsearch-01.crt
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-01/tqp-elasticsearch-01.key
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-01/tqp-elasticsearch-01.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-01/tqp-elasticsearch-01.key
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./volumes/tqp-elasticsearch-01:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certificates
+    restart: always
+    networks:
+      - elastic
+
+  tqp-elasticsearch-02:
+    image: tqp-elasticsearch:7.17.0
+    container_name: tqp-elasticsearch-02
+    hostname: tqp-elasticsearch-02
+    environment:
+      - node.name=tqp-elasticsearch-02
+      - cluster.name=elasticsearch-docker-cluster
+      - discovery.seed_hosts=tqp-elasticsearch-01,tqp-elasticsearch-03
+      - cluster.initial_master_nodes=tqp-elasticsearch-01
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=basic
+      - ELASTIC_PASSWORD=elastic
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-02/tqp-elasticsearch-02.crt
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-02/tqp-elasticsearch-02.key
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-02/tqp-elasticsearch-02.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-02/tqp-elasticsearch-02.key
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./volumes/tqp-elasticsearch-02:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certificates
+    restart: always
+    networks:
+      - elastic
+
+  tqp-elasticsearch-03:
+    image: tqp-elasticsearch:7.17.0
+    container_name: tqp-elasticsearch-03
+    hostname: tqp-elasticsearch-03
+    environment:
+      - node.name=tqp-elasticsearch-03
+      - cluster.name=elasticsearch-docker-cluster
+      - discovery.seed_hosts=tqp-elasticsearch-01,tqp-elasticsearch-02
+      - cluster.initial_master_nodes=tqp-elasticsearch-01
+      - bootstrap.memory_lock=true
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=basic
+      - ELASTIC_PASSWORD=elastic
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-03/tqp-elasticsearch-03.crt
+      - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-03/tqp-elasticsearch-03.key
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.certificate_authorities=/usr/share/elasticsearch/config/certificates/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-03/tqp-elasticsearch-03.crt
+      - xpack.security.transport.ssl.key=/usr/share/elasticsearch/config/certificates/tqp-elasticsearch-03/tqp-elasticsearch-03.key
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./volumes/tqp-elasticsearch-03:/usr/share/elasticsearch/data
+      - ./certs:/usr/share/elasticsearch/config/certificates
+    restart: always
+    networks:
+      - elastic
+
+  tqp-kibana-01:
+    image: tqp-kibana:7.17.0
+    container_name: tqp-kibana-01
+    hostname: tqp-kibana-01
+    volumes:
+      - ./volumes/tqp-kibana-01:/usr/share/kibana/data
+      - ./certs:/usr/share/elasticsearch/config/certificates
+    ports:
+      - 5601:5601
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_NAME=tqp-kibana-01
+      - MONITORING_ENABLED=true
+      - ELASTICSEARCH_HOSTS=["https://tqp-elasticsearch-01:9200"]
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana_system
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_SECURITY_ENABLED=true
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_KEY=/usr/share/elasticsearch/config/certificates/tqp-kibana-01/tqp-kibana-01.key
+      - SERVER_SSL_CERTIFICATE=/usr/share/elasticsearch/config/certificates/tqp-kibana-01/tqp-kibana-01.crt
+      - MAP_INCLUDEELASTICMAPSSERVICE=true
+    restart: always
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge

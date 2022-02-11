@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  tqp-kibana-01:
+    image: tqp-kibana:7.17.0
+    container_name: tqp-kibana-01
+    hostname: tqp-kibana-01
+    volumes:
+      - ./volumes/tqp-kibana-01:/usr/share/kibana/data
+      - ./certs:/usr/share/elasticsearch/config/certificates
+    ports:
+      - 5601:5601
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - SERVER_NAME=tqp-kibana-01
+      - MONITORING_ENABLED=true
+      - ELASTICSEARCH_HOSTS=["https://tqp-elasticsearch-01:9200"]
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana_system
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_SECURITY_ENABLED=true
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_KEY=/usr/share/elasticsearch/config/certificates/tqp-kibana-01/tqp-kibana-01.key
+      - SERVER_SSL_CERTIFICATE=/usr/share/elasticsearch/config/certificates/tqp-kibana-01/tqp-kibana-01.crt
+      - MAP_INCLUDEELASTICMAPSSERVICE=true
+    restart: always
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge

@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+  certificate_generator:
+    container_name: certificate_generator
+    image: tqp-elasticsearch:7.17.0
+    command: >
+      bash -c '
+        if [[ ! -f /certs/bundle.zip ]]; then
+          bin/elasticsearch-certutil cert --silent --pem --in config/certificates/certificate-generator-instances.yml -out /certs/bundle.zip;
+          unzip /certs/bundle.zip -d /certs; 
+        fi;
+        chown -R 1000:0 /certs
+      '
+    #network_mode: "host"
+    working_dir: /usr/share/elasticsearch
+    volumes: 
+      - ./certs:/certs
+      - ./:/usr/share/elasticsearch/config/certificates

@@ -1,0 +1,28 @@
+instances:
+  - name: tqp-elasticsearch-01
+    dns:
+      - tqp-elasticsearch-01
+      - localhost
+    ip:
+      - 127.0.0.1
+
+  - name: tqp-elasticsearch-02
+    dns:
+      - tqp-elasticsearch-02
+      - localhost
+    ip:
+      - 127.0.0.1
+      
+  - name: tqp-elasticsearch-03
+    dns:
+      - tqp-elasticsearch-03
+      - localhost
+    ip:
+      - 127.0.0.1
+      
+  - name: tqp-kibana-01
+    dns:
+      - tqp-kibana-01
+      - localhost
+    ip:
+      - 127.0.0.1
